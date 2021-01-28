@@ -6,7 +6,7 @@ import std.stdio : writefln;
 void main()
 {
   foreach(ubyte offset; [0x80, 0xc0]){
-    foreach(length; 0 .. 300){
+    foreach(length; 0 .. 3){
     //foreach(length; 0 .. 100000){
     //foreach(length; 4294967296 - 2 .. 4294967296 + 2){
     //foreach(length; 4294967296 .. 4294967296 + 1000000){
@@ -55,7 +55,44 @@ const(ubyte[]) lengthPrefix(const ulong length, const ubyte offset) @safe
     // at the python boundary, if length >= 256**8, raise exception
 }
 
-unittest {
+@safe unittest {
+  import std.format;
+
   // Hm, when does this actually run? It's supposed to be failing right now.
-  assert(lengthPrefix(0, 0x80) == '\x81');
+  void testPrefix(const ulong length, const ubyte offset, const string expected) @safe
+  {
+    const bytesPrefix = lengthPrefix(length, offset);
+    const hexPrefix = format!"0x%(%02x%)"(bytesPrefix);
+    if (hexPrefix != expected)
+    {
+      writefln(
+          "Test failed! offset: %s, length: %s, expected: %s, actual: %s",
+          offset,
+          length,
+          expected,
+          hexPrefix,
+      );
+      assert(false);
+    }
+  }
+
+  // 0x80 offset tests
+  testPrefix(0, 0x80, "0x80");
+  testPrefix(55, 0x80, "0xb7");
+  testPrefix(56, 0x80, "0xb838");
+  // max 32-bit unsigned int:
+  testPrefix(4294967295, 0x80, "0xbbffffffff");
+  testPrefix(4294967296, 0x80, "0xbc0100000000");
+  // max 64-bit unsigned int:
+  testPrefix(18446744073709551615, 0x80, "0xbfffffffffffffffff");
+
+  // 0xc0 offset tests
+  testPrefix(0, 0xc0, "0xc0");
+  testPrefix(55, 0xc0, "0xf7");
+  testPrefix(56, 0xc0, "0xf838");
+  // max 32-bit unsigned int:
+  testPrefix(4294967295, 0xc0, "0xfbffffffff");
+  testPrefix(4294967296, 0xc0, "0xfc0100000000");
+  // max 64-bit unsigned int:
+  testPrefix(18446744073709551615, 0xc0, "0xffffffffffffffffff");
 }

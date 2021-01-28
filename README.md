@@ -11,9 +11,9 @@ Notes for complete beginners in D. They are probably wrong, because I am one.
 Running
 -------
 
-To just run the native D code like a script:
+To just run the native D code like a script (with unit tests running):
 ```sh
-rdmd rlp.d
+rdmd -unittest rlp.d
 ```
 
 To time the native benchmark, uncomment the loop with 1 million (x2) invocations, then run:
