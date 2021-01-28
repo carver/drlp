@@ -34,7 +34,7 @@ const(ubyte[]) longToBigEndian(const ulong length) @safe
       }
     }
     assert(length == 0);
-    return ['\x00'];
+    return [0];
 }
 
 // See pyrlp:rlp/codec.py for reference
