@@ -6,10 +6,10 @@ import std.stdio : writefln;
 void main()
 {
   foreach(ubyte offset; [0x80, 0xc0]){
-    foreach(length; 0 .. 3){
+    //foreach(length; 0 .. 3){
     //foreach(length; 0 .. 100000){
     //foreach(length; 4294967296 - 2 .. 4294967296 + 2){
-    //foreach(length; 4294967296 .. 4294967296 + 1000000){
+    foreach(length; 4294967296 .. 4294967296 + 1000000){
       auto encoded = lengthPrefix(length, offset);
       // format string docs: https://dlang.org/phobos/std_format.html#formattedWrite
       // more inspiration: https://stackoverflow.com/q/42782598
